@@ -19,7 +19,7 @@ handle a subset of the ACEI method calls. These subsets are defined as follows:
 #### **Consensus** connection
 
 * Driven by a consensus protocol and is responsible for block execution.
-* Handles the `InitChain`, `BeginBlock`, `DeliverTx`, `EndBlock`, and `Commit` method
+* Handles the `InitLedger`, `BeginBlock`, `DeliverTx`, `EndBlock`, and `Commit` method
 calls.
 
 #### **Mempool** connection
@@ -54,7 +54,7 @@ These methods also return a `Codespace` string to Tendermint. This field is
 used to disambiguate `Code` values returned by different domains of the
 application. The `Codespace` is a namespace for the `Code`.
 
-The `Echo`, `Info`, `InitChain`, `BeginBlock`, `EndBlock`, `Commit` methods
+The `Echo`, `Info`, `InitLedger`, `BeginBlock`, `EndBlock`, `Commit` methods
 do not return errors. An error in any of these methods represents a critical
 issue that Tendermint has no reasonable way to handle. If there is an error in one
 of these methods, the application must crash to ensure that the error is safely
@@ -79,7 +79,7 @@ Tendermint consensus.
 ### Query
 
 The `Query` ACEI method query queries the application for information about application state.
-When Tendermint receives a `ResponseQuery` with a non-zero `Code`, this code is 
+When Tendermint receives a `ResponseQuery` with a non-zero `Code`, this code is
 returned directly to the client that initiated the query.
 
 ## Events
@@ -91,7 +91,7 @@ transactions and blocks this metadata relates to.
 Events returned via these ACEI methods do not impact Tendermint consensus in any way
 and instead exist to power subscriptions and queries of Tendermint state.
 
-An `Event` contains a `type` and a list of `EventAttributes`, which are key-value 
+An `Event` contains a `type` and a list of `EventAttributes`, which are key-value
 string pairs denoting metadata about what happened during the method's execution.
 `Event` values can be used to index transactions and blocks according to what happened
 during their execution. Note that the set of events returned for a block from
@@ -163,8 +163,8 @@ Example:
 Tendermint's security model relies on the use of "evidence". Evidence is proof of
 malicious behaviour by a network participant. It is the responsibility of Tendermint
 to detect such malicious behaviour. When malicious behavior is detected, Tendermint
-will gossip evidence of the behavior to other nodes and commit the evidence to 
-the chain once it is verified by all validators. This evidence will then be 
+will gossip evidence of the behavior to other nodes and commit the evidence to
+the chain once it is verified by all validators. This evidence will then be
 passed it on to the application through the ACEI. It is the responsibility of the
 application to handle the evidence and exercise punishment.
 
@@ -231,8 +231,8 @@ on them. All other fields in the `Response*` must be strictly deterministic.
 
 ## Block Execution
 
-The first time a new blockchain is started, Tendermint calls
-`InitChain`. From then on, the following sequence of methods is executed for each
+The first time a new distributed ledger is started, Tendermint calls
+`InitLedger`. From then on, the following sequence of methods is executed for each
 block:
 
 `BeginBlock, [DeliverTx], EndBlock, Commit`
@@ -297,7 +297,7 @@ the blockchain's `AppHash` which is verified via [light client verification](../
     | acei_version  | string | The Tendermint ACEI semantic version     | 4            |
 
 * **Response**:
-  
+
     | Name                | Type   | Description                                      | Field Number |
     |---------------------|--------|--------------------------------------------------|--------------|
     | data                | string | Some arbitrary information                       | 1            |
@@ -317,14 +317,14 @@ the blockchain's `AppHash` which is verified via [light client verification](../
 
 > Note: Semantic version is a reference to [semantic versioning](https://semver.org/). Semantic versions in info will be displayed as X.X.x.
 
-### InitChain
+### InitLedger
 
 * **Request**:
 
     | Name             | Type                                                                                                                                 | Description                                         | Field Number |
     |------------------|--------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------|--------------|
     | time             | [google.protobuf.Timestamp](https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#google.protobuf.Timestamp) | Genesis time                                        | 1            |
-    | chain_id         | string                                                                                                                               | ID of the blockchain.                               | 2            |
+    | ledger_id        | string                                                                                                                               | ID of the distributed ledger.                       | 2            |
     | consensus_params | [ConsensusParams](#consensusparams)                                                                                                  | Initial consensus-critical parameters.              | 3            |
     | validators       | repeated [ValidatorUpdate](#validatorupdate)                                                                                         | Initial genesis validators, sorted by voting power. | 4            |
     | app_state_bytes  | bytes                                                                                                                                | Serialized initial application state. JSON bytes.   | 5            |
@@ -340,9 +340,9 @@ the blockchain's `AppHash` which is verified via [light client verification](../
 
 * **Usage**:
     * Called once upon genesis.
-    * If ResponseInitChain.Validators is empty, the initial validator set will be the RequestInitChain.Validators
-    * If ResponseInitChain.Validators is not empty, it will be the initial
-    validator set (regardless of what is in RequestInitChain.Validators).
+    * If ResponseInitLedger.Validators is empty, the initial validator set will be the RequestInitLedger.Validators
+    * If ResponseInitLedger.Validators is not empty, it will be the initial
+    validator set (regardless of what is in RequestInitLedger.Validators).
     * This allows the app to decide if it wants to accept the initial validator
     set proposed by tendermint (ie. in the genesis file), or if it wants to use
     a different one (perhaps computed based on some application specific

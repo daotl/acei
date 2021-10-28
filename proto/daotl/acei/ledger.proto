@@ -39,10 +39,10 @@ message BlockID {
 // TendermintHeader defines the structure of a Tendermint block header.
 message TendermintHeader {
   // basic block info
-  daotl.acei.ConsensusVersion  version  = 1 [(gogoproto.nullable) = false];
-  string                       chain_id = 2 [(gogoproto.customname) = "ChainID"];
-  int64                        height   = 3;
-  google.protobuf.Timestamp    time     = 4 [(gogoproto.nullable) = false, (gogoproto.stdtime) = true];
+  daotl.acei.ConsensusVersion  version   = 1 [(gogoproto.nullable) = false];
+  string                       ledger_id = 2 [(gogoproto.customname) = "LedgerID"];
+  int64                        height    = 3;
+  google.protobuf.Timestamp    time      = 4 [(gogoproto.nullable) = false, (gogoproto.stdtime) = true];
 
   // prev block info
   BlockID last_block_id = 5 [(gogoproto.nullable) = false];

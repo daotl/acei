@@ -46,7 +46,7 @@ Tendermint will allow chains to start from an arbitrary initial height:
 - A new field `initial_height` is added to the genesis file, defaulting to `1`. It can be set to any
 non-negative integer, and `0` is considered equivalent to `1`.
 
-- A new field `InitialHeight` is added to the ABCI `RequestInitChain` message, with the same value
+- A new field `InitialHeight` is added to the ABCI `RequestInitLedger` message, with the same value
 and semantics as the genesis field.
 
 - A new field `InitialHeight` is added to the `state.State` struct, where `0` is considered invalid.

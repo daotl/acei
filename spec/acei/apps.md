@@ -14,7 +14,7 @@ Here we cover the following components of ACEI applications:
 - [Transaction Results](#transaction-results) - rules around transaction
   results and validity
 - [Validator Set Updates](#validator-updates) - how validator sets are
-  changed during `InitChain` and `EndBlock`
+  changed during `InitLedger` and `EndBlock`
 - [Query](#query) - standards for using the `Query` method and proofs about the
   application state
 - [Crash Recovery](#crash-recovery) - handshake protocol to synchronize
@@ -106,7 +106,7 @@ recheck (`CheckTxType_Recheck`).
 Finally, after re-checking transactions in the mempool, Tendermint will unlock
 the mempool connection. New transactions are once again able to be processed through CheckTx.
 
-Note that CheckTx is just a weak filter to keep invalid transactions out of the block chain.
+Note that CheckTx is just a weak filter to keep invalid transactions out of the distributed ledger.
 CheckTx doesn't have to check everything that affects transaction validity; the
 expensive things can be skipped.  It's weak because a Byzantine node doesn't
 care about CheckTx; it can propose a block full of invalid transactions if it wants.
@@ -208,7 +208,7 @@ been committed yet, they are effectively ignored by Tendermint.
 
 ### DeliverTx
 
-DeliverTx is the workhorse of the blockchain. Tendermint sends the
+DeliverTx is the workhorse of the distributed ledger. Tendermint sends the
 DeliverTx requests asynchronously but in order, and relies on the
 underlying socket protocol (ie. TCP) to ensure they are received by the
 app in order. They have already been ordered in the global consensus by
@@ -231,7 +231,7 @@ events took place during their execution.
 
 ## Updating the Validator Set
 
-The application may set the validator set during InitChain, and may update it during
+The application may set the validator set during InitLedger, and may update it during
 EndBlock.
 
 Note that the maximum total power of the validator set is bounded by
@@ -243,14 +243,14 @@ Additionally, applications must ensure that a single set of updates does not con
 a given public key can only appear once within a given update. If an update includes
 duplicates, the block execution will fail irrecoverably.
 
-### InitChain
+### InitLedger
 
-The `InitChain` method can return a list of validators.
+The `InitLedger` method can return a list of validators.
 If the list is empty, Tendermint will use the validators loaded in the genesis
 file.
-If the list returned by `InitChain` is not empty, Tendermint will use its contents as the validator set.
+If the list returned by `InitLedger` is not empty, Tendermint will use its contents as the validator set.
 This way the application can set the initial validator set for the
-blockchain.
+distributed ledger.
 
 ### EndBlock
 
@@ -289,9 +289,9 @@ Note the updates returned in block `H` will only take effect at block `H+2`.
 
 ## Consensus Parameters
 
-ConsensusParams enforce certain limits in the blockchain, like the maximum size
+ConsensusParams enforce certain limits in the distributed ledger, like the maximum size
 of blocks, amount of gas used in a block, and the maximum acceptable age of
-evidence. They can be set in InitChain and updated in EndBlock.
+evidence. They can be set in InitLedger and updated in EndBlock.
 
 ### BlockParams.MaxBytes
 
@@ -347,20 +347,20 @@ Must have `MaxNum > 0`.
 
 ### Updates
 
-The application may set the ConsensusParams during InitChain, and update them during
+The application may set the ConsensusParams during InitLedger, and update them during
 EndBlock. If the ConsensusParams is empty, it will be ignored. Each field
 that is not empty will be applied in full. For instance, if updating the
 Block.MaxBytes, applications must also set the other Block fields (like
 Block.MaxGas), even if they are unchanged, as they will otherwise cause the
 value to be updated to 0.
 
-#### InitChain
+#### InitLedger
 
-ResponseInitChain includes a ConsensusParams.
+ResponseInitLedger includes a ConsensusParams.
 If ConsensusParams is nil, Tendermint will use the params loaded in the genesis
 file. If ConsensusParams is not nil, Tendermint will use it.
 This way the application can determine the initial consensus params for the
-blockchain.
+distributed ledger.
 
 #### EndBlock
 
@@ -392,7 +392,7 @@ Query functionality if they do not wish too.
 ### Query Proofs
 
 The Tendermint block header includes a number of hashes, each providing an
-anchor for some type of proof about the blockchain. The `ValidatorsHash` enables
+anchor for some type of proof about the distributed ledger. The `ValidatorsHash` enables
 quick verification of the validator set, the `DataHash` gives quick
 verification of the transactions included in the block, etc.
 
@@ -491,7 +491,7 @@ The procedure is as follows.
 
 First, some simple start conditions:
 
-If `appBlockHeight == 0`, then call InitChain.
+If `appBlockHeight == 0`, then call InitLedger.
 
 If `storeBlockHeight == 0`, we're done.
 
@@ -529,7 +529,7 @@ This happens if we crashed after the app finished Commit but before Tendermint s
 ## State Sync
 
 A new node joining the network can simply join consensus at the genesis height and replay all
-historical blocks until it is caught up. However, for large chains this can take a significant
+historical blocks until it is caught up. However, for large ledgers this can take a significant
 amount of time, often on the order of days or weeks.
 
 State sync is an alternative mechanism for bootstrapping a new node, where it fetches a snapshot
@@ -576,7 +576,7 @@ and which formats to use, but must provide the following guarantees:
   concurrent writes. This can be accomplished by using a data store that supports ACID
   transactions with snapshot isolation.
 
-- **Asynchronous:** Taking a snapshot can be time-consuming, so it must not halt chain progress,
+- **Asynchronous:** Taking a snapshot can be time-consuming, so it must not halt ledger progress,
   for example by running in a separate thread.
 
 - **Deterministic:** A snapshot taken at the same height in the same format must be identical
@@ -587,10 +587,10 @@ A very basic approach might be to use a datastore with MVCC transactions (such a
 start a transaction immediately after block commit, and spawn a new thread which is passed the
 transaction handle. This thread can then export all data items, serialize them using e.g.
 Protobuf, hash the byte stream, split it into chunks, and store the chunks in the file system
-along with some metadata - all while the blockchain is applying new blocks in parallel.
+along with some metadata - all while the distributed ledger is applying new blocks in parallel.
 
 A more advanced approach might include incremental verification of individual chunks against the
-chain app hash, parallel or batched exports, compression, and so on.
+ledger app hash, parallel or batched exports, compression, and so on.
 
 Old snapshots should be removed after some time - generally only the last two snapshots are needed
 (to prevent the last one from being removed while a node is restoring it).
@@ -598,7 +598,7 @@ Old snapshots should be removed after some time - generally only the last two sn
 ### Bootstrapping a Node
 
 An empty node can be state synced by setting the configuration option `statesync.enabled =
-true`. The node also needs the chain genesis file for basic chain info, and configuration for
+true`. The node also needs the ledger genesis file for basic ledger info, and configuration for
 light client verification of the restored snapshot: a set of Tendermint RPC servers, and a
 trusted header hash and corresponding height from a trusted source, via the `statesync`
 configuration section.
@@ -606,7 +606,7 @@ configuration section.
 Once started, the node will connect to the P2P network and begin discovering snapshots. These
 will be offered to the local application via the `OfferSnapshot` ACEI method. Once a snapshot
 is accepted Tendermint will fetch and apply the snapshot chunks. After all chunks have been
-successfully applied, Tendermint verifies the app's `AppHash` against the chain using the light
+successfully applied, Tendermint verifies the app's `AppHash` against the ledger using the light
 client, then switches the node to normal consensus operation.
 
 #### Snapshot Discovery
@@ -641,7 +641,7 @@ restarting restoration, or simply abort with an error.
 #### Snapshot Verification
 
 Once all chunks have been accepted, Tendermint issues an `Info` ACEI call to retrieve the
-`LastBlockAppHash`. This is compared with the trusted app hash from the chain, retrieved and
+`LastBlockAppHash`. This is compared with the trusted app hash from the ledger, retrieved and
 verified using the light client. Tendermint also checks that `LastBlockHeight` corresponds to the
 height of the snapshot.
 
@@ -661,11 +661,11 @@ P2P configuration options to whitelist a set of trusted peers that can provide v
 #### Transition to Consensus
 
 Once the snapshots have all been restored, Tendermint gathers additional information necessary for
-bootstrapping the node (e.g. chain ID, consensus parameters, validator sets, and block headers)
+bootstrapping the node (e.g. ledger ID, consensus parameters, validator sets, and block headers)
 from the genesis file and light client RPC servers. It also fetches and records the `AppVersion`
 from the ACEI application.
 
 Once the state machine has been restored and Tendermint has gathered this additional
-information, it transitions to block sync (if enabled) to fetch any remaining blocks up the chain
+information, it transitions to block sync (if enabled) to fetch any remaining blocks up the ledger
 head, and then transitions to regular consensus operation. At this point the node operates like
 any other node, apart from having a truncated block history at the height of the restored snapshot.

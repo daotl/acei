@@ -5,8 +5,8 @@ option go_package = "github.com/daotl/go-acei/types";
 
 import "gogoproto/gogo.proto";
 
-// ConsensusVersion captures the consensus rules for processing a block in the blockchain,
-// including all blockchain data structures and the rules of the application's
+// ConsensusVersion captures the consensus rules for processing a block in the distributed ledger,
+// including all ledger data structures and the rules of the application's
 // state transition machine.
 message ConsensusVersion {
   option (gogoproto.equal) = true;
