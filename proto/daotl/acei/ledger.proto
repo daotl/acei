@@ -41,7 +41,7 @@ message TendermintHeader {
   // basic block info
   daotl.acei.ConsensusVersion  version   = 1 [(gogoproto.nullable) = false];
   string                       ledger_id = 2 [(gogoproto.customname) = "LedgerID"];
-  int64                        height    = 3;
+  uint64                       height    = 3;
   google.protobuf.Timestamp    time      = 4 [(gogoproto.nullable) = false, (gogoproto.stdtime) = true];
 
   // prev block info

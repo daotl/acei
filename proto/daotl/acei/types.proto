@@ -57,13 +57,13 @@ message RequestInitLedger {
   daotl.acei.ConsensusParams       consensus_params = 3;
   repeated ValidatorUpdate         validators       = 4 [(gogoproto.nullable) = false];
   bytes                            app_state_bytes  = 5;
-  int64                            initial_height   = 6;
+  uint64                           initial_height   = 6;
 }
 
 message RequestQuery {
   bytes  data   = 1;
   string path   = 2;
-  int64  height = 3;
+  uint64 height = 3;
   bool   prove  = 4;
 }
 
@@ -89,7 +89,7 @@ message RequestDeliverTx {
 }
 
 message RequestEndBlock {
-  int64 height = 1;
+  uint64 height = 1;
 }
 
 message RequestCommit {}
@@ -158,7 +158,7 @@ message ResponseInfo {
   string version     = 2;
   uint64 app_version = 3;
 
-  int64 last_block_height   = 4;
+  uint64 last_block_height  = 4;
   bytes last_block_app_hash = 5;
 }
 
@@ -177,7 +177,7 @@ message ResponseQuery {
   bytes                      key       = 6;
   bytes                      value     = 7;
   daotl.acei.ProofOps        proof_ops = 8;
-  int64                      height    = 9;
+  uint64                     height    = 9;
   string                     codespace = 10;
 }
 
@@ -222,8 +222,8 @@ message ResponseEndBlock {
 
 message ResponseCommit {
   // reserve 1
-  bytes data          = 2;
-  int64 retain_height = 3;
+  bytes data           = 2;
+  uint64 retain_height = 3;
 }
 
 message ResponseListSnapshots {
@@ -289,7 +289,7 @@ message EventAttribute {
 //
 // One usage is indexing transaction results.
 message TxResult {
-  int64             height = 1;
+  uint64            height = 1;
   uint32            index  = 2;
   bytes             tx     = 3;
   ResponseDeliverTx result = 4 [(gogoproto.nullable) = false];
@@ -328,7 +328,7 @@ message Evidence {
   // The offending validator
   Validator validator = 2 [(gogoproto.nullable) = false];
   // The height when the offense occurred
-  int64 height = 3;
+  uint64 height = 3;
   // The corresponding time where the offense occurred
   google.protobuf.Timestamp time = 4 [(gogoproto.nullable) = false, (gogoproto.stdtime) = true];
   // Total voting power of the validator set in case the ACEI application does
