@@ -10,6 +10,7 @@ message Proof {
   int64          index     = 2;
   bytes          leaf_hash = 3;
   repeated bytes aunts     = 4;
+  uint32         hash_type = 5;
 }
 
 message ValueOp {
