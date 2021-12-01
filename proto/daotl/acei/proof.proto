@@ -31,9 +31,10 @@ message DominoOp {
 // The data could be arbitrary format, providing nessecary data
 // for example neighbouring node hash
 message ProofOp {
-  string type = 1;
-  bytes  key  = 2;
-  bytes  data = 3;
+  string type      = 1;
+  bytes  key       = 2;
+  bytes  data      = 3;
+  uint32 hash_type = 5;
 }
 
 // ProofOps is Merkle proof defined by the list of ProofOps

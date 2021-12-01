@@ -750,11 +750,12 @@ Most of the data structures used in ACEI are shared [common data structures](../
 
 * **Fields**:
 
-    | Name | Type   | Description                                    | Field Number |
-    |------|--------|------------------------------------------------|--------------|
-    | type | string | Type of Merkle proof and how it's encoded.     | 1            |
-    | key  | bytes  | Key in the Merkle tree that this proof is for. | 2            |
-    | data | bytes  | Encoded Merkle proof for the key.              | 3            |
+    | Name      | Type   | Description                                        | Field Number |
+    |-----------|--------|----------------------------------------------------|--------------|
+    | type      | string | Type of Merkle proof and how it's encoded.         | 1            |
+    | key       | bytes  | Key in the Merkle tree that this proof is for.     | 2            |
+    | data      | bytes  | Encoded Merkle proof for the key.                  | 3            |
+    | hash_type | uint32 | `Hash` type used as defined in Go `crypto` package | 4            |
 
 ### Snapshot
 
