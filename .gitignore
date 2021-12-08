@@ -6,4 +6,5 @@
 *.gz
 *.dvi
 .idea
+*.pb.go
 .vscode

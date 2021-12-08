@@ -1,8 +1,6 @@
 syntax = "proto3";
 package daotl.acei;
 
-option go_package = "github.com/daotl/go-acei/types";
-
 import "gogoproto/gogo.proto";
 import "google/protobuf/timestamp.proto";
 import "daotl/acei/version.proto";
