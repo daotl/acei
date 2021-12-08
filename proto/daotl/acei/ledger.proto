@@ -8,14 +8,14 @@ import "daotl/acei/version.proto";
 // -- DAOTL --
 
 message Header {
-  bytes               creator           = 1; // Address
-  uint64              timestamp         = 2;
-  repeated bytes      previous_hashes   = 3; // []CID
-  uint64              height            = 4;
-  bytes               transactions_root = 5; // CID
-  uint64              transaction_count = 6;
-  bytes               extra             = 7;
-  bytes               signature         = 8;
+  bytes          creator           = 1; // Address
+  uint64         timestamp         = 2;
+  repeated bytes previous_hashes   = 3; // []CID
+  uint64         height            = 4;
+  bytes          transactions_root = 5; // CID
+  uint64         transaction_count = 6;
+  bytes          extra             = 7;
+  bytes          signature         = 8;
 }
 
 // -- Tendermint --
@@ -37,10 +37,10 @@ message BlockID {
 // TendermintHeader defines the structure of a Tendermint block header.
 message TendermintHeader {
   // basic block info
-  daotl.acei.ConsensusVersion  version   = 1 [(gogoproto.nullable) = false];
-  string                       ledger_id = 2 [(gogoproto.customname) = "LedgerID"];
-  uint64                       height    = 3;
-  google.protobuf.Timestamp    time      = 4 [(gogoproto.nullable) = false, (gogoproto.stdtime) = true];
+  daotl.acei.ConsensusVersion version   = 1 [(gogoproto.nullable) = false];
+  string                      ledger_id = 2 [(gogoproto.customname) = "LedgerID"];
+  uint64                      height    = 3;
+  google.protobuf.Timestamp   time      = 4 [(gogoproto.nullable) = false, (gogoproto.stdtime) = true];
 
   // prev block info
   BlockID last_block_id = 5 [(gogoproto.nullable) = false];

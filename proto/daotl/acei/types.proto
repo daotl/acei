@@ -50,12 +50,12 @@ message RequestInfo {
 }
 
 message RequestInitLedger {
-  google.protobuf.Timestamp        time             = 1 [(gogoproto.nullable) = false, (gogoproto.stdtime) = true];
-  string                           ledger_id        = 2;
-  daotl.acei.ConsensusParams       consensus_params = 3;
-  repeated ValidatorUpdate         validators       = 4 [(gogoproto.nullable) = false];
-  bytes                            app_state_bytes  = 5;
-  uint64                           initial_height   = 6;
+  google.protobuf.Timestamp  time             = 1 [(gogoproto.nullable) = false, (gogoproto.stdtime) = true];
+  string                     ledger_id        = 2;
+  daotl.acei.ConsensusParams consensus_params = 3;
+  repeated ValidatorUpdate   validators       = 4 [(gogoproto.nullable) = false];
+  bytes                      app_state_bytes  = 5;
+  uint64                     initial_height   = 6;
 }
 
 message RequestQuery {
@@ -66,10 +66,10 @@ message RequestQuery {
 }
 
 message RequestBeginBlock {
-  bytes                   hash                 = 1;
-  daotl.acei.Header       header               = 2 [(gogoproto.nullable) = false];
-  LastCommitInfo          last_commit_info     = 3 [(gogoproto.nullable) = false];
-  repeated Evidence       byzantine_validators = 4 [(gogoproto.nullable) = false];
+  bytes             hash                 = 1;
+  daotl.acei.Header header               = 2 [(gogoproto.nullable) = false];
+  LastCommitInfo    last_commit_info     = 3 [(gogoproto.nullable) = false];
+  repeated Evidence byzantine_validators = 4 [(gogoproto.nullable) = false];
 }
 
 enum CheckTxType {
@@ -156,27 +156,27 @@ message ResponseInfo {
   string version     = 2;
   uint64 app_version = 3;
 
-  uint64 last_block_height  = 4;
-  bytes last_block_app_hash = 5;
+  uint64 last_block_height   = 4;
+  bytes  last_block_app_hash = 5;
 }
 
 message ResponseInitLedger {
-  daotl.acei.ConsensusParams       consensus_params = 1;
-  repeated ValidatorUpdate         validators       = 2 [(gogoproto.nullable) = false];
-  bytes                            app_hash         = 3;
+  daotl.acei.ConsensusParams consensus_params = 1;
+  repeated ValidatorUpdate   validators       = 2 [(gogoproto.nullable) = false];
+  bytes                      app_hash         = 3;
 }
 
 message ResponseQuery {
   uint32 code = 1;
   // bytes data = 2; // use "value" instead.
-  string                     log       = 3;  // nondeterministic
-  string                     info      = 4;  // nondeterministic
-  int64                      index     = 5;
-  bytes                      key       = 6;
-  bytes                      value     = 7;
-  daotl.acei.ProofOps        proof_ops = 8;
-  uint64                     height    = 9;
-  string                     codespace = 10;
+  string              log       = 3;  // nondeterministic
+  string              info      = 4;  // nondeterministic
+  int64               index     = 5;
+  bytes               key       = 6;
+  bytes               value     = 7;
+  daotl.acei.ProofOps proof_ops = 8;
+  uint64              height    = 9;
+  string              codespace = 10;
 }
 
 message ResponseBeginBlock {
@@ -213,14 +213,14 @@ message ResponseDeliverTx {
 }
 
 message ResponseEndBlock {
-  repeated ValidatorUpdate         validator_updates       = 1 [(gogoproto.nullable) = false];
-  daotl.acei.ConsensusParams       consensus_param_updates = 2;
-  repeated Event                   events                  = 3 [(gogoproto.nullable) = false, (gogoproto.jsontag) = "events,omitempty"];
+  repeated ValidatorUpdate   validator_updates       = 1 [(gogoproto.nullable) = false];
+  daotl.acei.ConsensusParams consensus_param_updates = 2;
+  repeated Event             events                  = 3 [(gogoproto.nullable) = false, (gogoproto.jsontag) = "events,omitempty"];
 }
 
 message ResponseCommit {
   // reserve 1
-  bytes data           = 2;
+  bytes  data          = 2;
   uint64 retain_height = 3;
 }
 
@@ -305,8 +305,8 @@ message Validator {
 
 // ValidatorUpdate
 message ValidatorUpdate {
-  daotl.acei.PublicKey        pub_key = 1 [(gogoproto.nullable) = false];
-  int64                       power   = 2;
+  daotl.acei.PublicKey pub_key = 1 [(gogoproto.nullable) = false];
+  int64                power   = 2;
 }
 
 // VoteInfo
