@@ -1,5 +1,6 @@
 syntax = "proto3";
-package daotl.acei;
+package daotl.acei.consensus.tendermint;
+option go_package = "github.com/daotl/go-acei/types/consensus/tendermint";
 
 import "gogoproto/gogo.proto";
 import "google/protobuf/duration.proto";

@@ -321,22 +321,34 @@ the blockchain's `AppHash` which is verified via [light client verification](../
 
 * **Request**:
 
+    | Name            | Type                                                                                                                                 | Description                                         | Field Number                                        |
+    |-----------------|--------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------|-----------------------------------------------------|
+    | time            | [google.protobuf.Timestamp](https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#google.protobuf.Timestamp) | Genesis time                                        | 1                                                   |
+    | ledger_id       | string                                                                                                                               | ID of the distributed ledger.                       | 2                                                   |
+    | app_state_bytes | bytes                                                                                                                                | Serialized initial application state. JSON bytes.   | 3                                                   |
+    | initial_height  | int64                                                                                                                                | Height of the initial block (typically `1`).        | 4                                                   |
+    | extra           | bytes                                                                                                                                | Serialized consensus-specific extra data (optional).| 5                                                   |
+
+** **Tendermint Extra Data**: 
+
     | Name             | Type                                                                                                                                 | Description                                         | Field Number |
     |------------------|--------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------|--------------|
-    | time             | [google.protobuf.Timestamp](https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#google.protobuf.Timestamp) | Genesis time                                        | 1            |
-    | ledger_id        | string                                                                                                                               | ID of the distributed ledger.                       | 2            |
-    | consensus_params | [ConsensusParams](#consensusparams)                                                                                                  | Initial consensus-critical parameters.              | 3            |
-    | validators       | repeated [ValidatorUpdate](#validatorupdate)                                                                                         | Initial genesis validators, sorted by voting power. | 4            |
-    | app_state_bytes  | bytes                                                                                                                                | Serialized initial application state. JSON bytes.   | 5            |
-    | initial_height   | int64                                                                                                                                | Height of the initial block (typically `1`).        | 6            |
+    | consensus_params | [ConsensusParams](#consensusparams)                                                                                                  | Initial consensus-critical parameters.              | 1            |
+    | validators       | repeated [ValidatorUpdate](#validatorupdate)                                                                                         | Initial genesis validators, sorted by voting power. | 2            |
 
 * **Response**:
+
+    | Name             | Type                                         | Description                                         | Field Number |
+    |------------------|----------------------------------------------|-----------------------------------------------------|--------------|
+    | app_hash         | bytes                                        | Initial application hash.                           | 1            |
+    | extra            | bytes                                        | Serialized consensus-specific extra data (optional).| 2            |
+
+** **Tendermint Extra Data**:
 
     | Name             | Type                                         | Description                                     | Field Number |
     |------------------|----------------------------------------------|-------------------------------------------------|--------------|
     | consensus_params | [ConsensusParams](#consensusparams)          | Initial consensus-critical parameters (optional | 1            |
     | validators       | repeated [ValidatorUpdate](#validatorupdate) | Initial validator set (optional).               | 2            |
-    | app_hash         | bytes                                        | Initial application hash.                       | 3            |
 
 * **Usage**:
     * Called once upon genesis.
@@ -387,8 +399,14 @@ the blockchain's `AppHash` which is verified via [light client verification](../
     |----------------------|---------------------------------------------|-------------------------------------------------------------------------------------------------------------------|--------------|
     | hash                 | bytes                                       | The block's hash. This can be derived from the block header.                                                      | 1            |
     | header               | [Header](../core/data_structures.md#header) | The block header.                                                                                                 | 2            |
-    | last_commit_info     | [LastCommitInfo](#lastcommitinfo)           | Info about the last commit, including the round, and the list of validators and which ones signed the last block. | 3            |
-    | byzantine_validators | repeated [Evidence](#evidence)              | List of evidence of validators that acted maliciously.                                                            | 4            |
+    | extra                | bytes                                       | Serialized consensus-specific extra data (optional).                                                              | 3            |
+
+** **Tendermint Extra Data**:
+
+    | Name                 | Type                                        | Description                                                                                                       | Field Number |
+    |----------------------|---------------------------------------------|-------------------------------------------------------------------------------------------------------------------|--------------|
+    | last_commit_info     | [LastCommitInfo](#lastcommitinfo)           | Info about the last commit, including the round, and the list of validators and which ones signed the last block. | 1            |
+    | byzantine_validators | repeated [Evidence](#evidence)              | List of evidence of validators that acted maliciously.                                                            | 2            |
 
 * **Response**:
 
@@ -480,9 +498,15 @@ the blockchain's `AppHash` which is verified via [light client verification](../
 
     | Name                    | Type                                         | Description                                                     | Field Number |
     |-------------------------|----------------------------------------------|-----------------------------------------------------------------|--------------|
+    | events                  | repeated [Event](#events)                    | Type & Key-Value events for indexing                            | 1            |
+    | extra                   | bytes                                        | Serialized consensus-specific extra data (optional).            | 2            |
+
+** **Tendermint Extra Data**:
+
+    | Name                    | Type                                         | Description                                                     | Field Number |
+    |-------------------------|----------------------------------------------|-----------------------------------------------------------------|--------------|
     | validator_updates       | repeated [ValidatorUpdate](#validatorupdate) | Changes to validator set (set voting power to 0 to remove).     | 1            |
     | consensus_param_updates | [ConsensusParams](#consensusparams)          | Changes to consensus-critical time, size, and other parameters. | 2            |
-    | events                  | repeated [Event](#events)                    | Type & Key-Value events for indexing                            | 3            |
 
 * **Usage**:
     * Signals the end of a block.

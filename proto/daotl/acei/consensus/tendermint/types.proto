@@ -1,0 +1,89 @@
+syntax = "proto3";
+package daotl.acei.consensus.tendermint;
+option  go_package = "github.com/daotl/go-acei/types/consensus/tendermint";
+
+// For more information on gogo.proto, see:
+// https://github.com/gogo/protobuf/blob/master/extensions.md
+import "daotl/acei/keys.proto";
+import "daotl/acei/consensus/tendermint/params.proto";
+import "google/protobuf/timestamp.proto";
+import "gogoproto/gogo.proto";
+
+// NOTE: When using custom types, mind the warnings.
+// https://github.com/gogo/protobuf/blob/master/custom_types.md#warnings-and-issues
+
+//----------------------------------------
+// Request types
+
+message RequestInitLedgerExtra {
+  ConsensusParams          consensus_params = 1;
+  repeated ValidatorUpdate validators       = 2 [(gogoproto.nullable) = false];
+}
+
+message RequestBeginBlockExtra {
+  LastCommitInfo    last_commit_info     = 1 [(gogoproto.nullable) = false];
+  repeated Evidence byzantine_validators = 2 [(gogoproto.nullable) = false];
+}
+
+//----------------------------------------
+// Response types
+
+message ResponseInitLedgerExtra {
+  ConsensusParams          consensus_params = 1;
+  repeated ValidatorUpdate validators       = 2 [(gogoproto.nullable) = false];
+}
+
+message ResponseEndBlockExtra {
+  repeated ValidatorUpdate validator_updates       = 1 [(gogoproto.nullable) = false];
+  ConsensusParams          consensus_param_updates = 2;
+}
+
+//----------------------------------------
+// Misc.
+
+message LastCommitInfo {
+  int32             round = 1;
+  repeated VoteInfo votes = 2 [(gogoproto.nullable) = false];
+}
+
+//----------------------------------------
+// Blockchain Types
+
+// Validator
+message Validator {
+  bytes address = 1;  // The first 20 bytes of SHA256(public key)
+  // PubKey pub_key = 2 [(gogoproto.nullable)=false];
+  int64 power = 3;  // The voting power
+}
+
+// ValidatorUpdate
+message ValidatorUpdate {
+  PublicKey pub_key = 1 [(gogoproto.nullable) = false];
+  int64     power   = 2;
+}
+
+// VoteInfo
+message VoteInfo {
+  Validator validator         = 1 [(gogoproto.nullable) = false];
+  bool      signed_last_block = 2;
+}
+
+enum EvidenceType {
+  UNKNOWN             = 0;
+  DUPLICATE_VOTE      = 1;
+  LIGHT_CLIENT_ATTACK = 2;
+}
+
+message Evidence {
+  EvidenceType type = 1;
+  // The offending validator
+  Validator validator = 2 [(gogoproto.nullable) = false];
+  // The height when the offense occurred
+  uint64 height = 3;
+  // The corresponding time where the offense occurred
+  google.protobuf.Timestamp time = 4 [(gogoproto.nullable) = false, (gogoproto.stdtime) = true];
+  // Total voting power of the validator set in case the ACEI application does
+  // not store historical validators.
+  // https://github.com/tendermint/tendermint/issues/4581
+  int64 total_voting_power = 5;
+}
